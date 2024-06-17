@@ -1,11 +1,11 @@
 resource "aws_security_group" "drumncode_vpc" {
-  name        = "ecs-sg"
+  name        = "alb-sg"
   description = "Allow inbound traffic"
   vpc_id      = aws_vpc.drumncode_vpc.id
 
   ingress {
-    from_port   = 9000
-    to_port     = 9000
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -16,6 +16,36 @@ resource "aws_security_group" "drumncode_vpc" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+resource "aws_security_group" "drumncode_ecs" {
+  name        = "ecs-sg"
+  description = "Allow inbound traffic"
+  vpc_id      = aws_vpc.drumncode_vpc.id
+
+  ingress {
+    from_port       = 9000
+    to_port         = 9000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.drumncode_vpc.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group_rule" "allow_internal_communication" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.drumncode_vpc.id
+  source_security_group_id = aws_security_group.drumncode_vpc.id
+  description              = "Allow internal communication within the security group"
 }
 
 # ECS Cluster
