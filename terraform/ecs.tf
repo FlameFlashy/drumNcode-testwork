@@ -62,44 +62,7 @@ resource "aws_ecs_task_definition" "laravel" {
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_task_execution_drm.arn
 
-  container_definitions = jsonencode([
-    {
-      name  = "laravel"
-      image = var.docker_image
-      portMappings = [
-        {
-          containerPort = 9000
-          hostPort      = 9000
-        }
-      ]
-      environment = [
-        {
-          name  = "DB_USER"
-          value = var.db_user
-        },
-        {
-          name  = "DB_PASSWORD"
-          value = var.db_password
-        },
-        {
-          name  = "DB_ENDPOINT"
-          value = aws_db_instance.database.endpoint
-        },
-        {
-          name  = "DB_NAME"
-          value = var.db_name
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = "/ecs/laravel"
-          "awslogs-region"        = var.region
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
-    }
-  ])
+  container_definitions = jsonencode(jsondecode(file("./container_definitions.json")))
 }
 
 # ECS Service for laravel
