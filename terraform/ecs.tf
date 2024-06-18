@@ -20,7 +20,7 @@ resource "aws_security_group" "drumncode_vpc" {
 
 resource "aws_security_group" "drumncode_ecs" {
   name        = "ecs-sg"
-  description = "Allow inbound traffic"
+  description = "Allow inbound to ECS"
   vpc_id      = aws_vpc.drumncode_vpc.id
 
   ingress {
@@ -111,7 +111,7 @@ resource "aws_ecs_service" "laravel-service" {
   launch_type     = "FARGATE"
   network_configuration {
     subnets          = [aws_subnet.drumncode_vpc[0].id, aws_subnet.drumncode_vpc[1].id]
-    security_groups  = [aws_security_group.drumncode_vpc.id]
+    security_groups  = [aws_security_group.drumncode_ecs.id]
     assign_public_ip = true
   }
 
