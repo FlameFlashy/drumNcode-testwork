@@ -30,6 +30,13 @@ resource "aws_security_group" "drumncode_ecs" {
     security_groups = [aws_security_group.drumncode_vpc.id]
   }
 
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.drumncode_vpc.id]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -83,7 +90,7 @@ resource "aws_ecs_task_definition" "laravel" {
         },
         {
           name : "DB_HOST",
-          value : "aws_db_instance.database.endpoint"
+          value : "terraform-20240619153333570500000006.c34as0ca8wv2.eu-central-1.rds.amazonaws.com"
         },
         {
           name : "DB_PORT",

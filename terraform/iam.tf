@@ -1,4 +1,3 @@
-# IAM Role for ECS
 resource "aws_iam_role" "ecs_task_execution_drm" {
   name = "ecsTaskExecutionRole"
 
@@ -77,4 +76,31 @@ resource "aws_iam_policy" "ecs_ssm_secrets_access" {
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_drm_ssm_secrets" {
   role       = aws_iam_role.ecs_task_execution_drm.name
   policy_arn = aws_iam_policy.ecs_ssm_secrets_access.arn
+}
+
+# IAM Policy for accessing RDS
+resource "aws_iam_policy" "ecs_rds_access" {
+  name        = "EcsRDSAccessPolicy"
+  description = "Policy to allow ECS tasks to access Amazon RDS"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "rds:DescribeDBInstances",
+          "rds:ListTagsForResource",
+          "rds:DescribeDBClusters",
+          "rds:DescribeDBSnapshots"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Attach the RDS access policy to the ECS task execution role
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_drm_rds_access" {
+  role       = aws_iam_role.ecs_task_execution_drm.name
+  policy_arn = aws_iam_policy.ecs_rds_access.arn
 }

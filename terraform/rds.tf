@@ -8,7 +8,7 @@ resource "aws_security_group" "database" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -31,7 +31,7 @@ resource "aws_db_instance" "database" {
   parameter_group_name   = "default.mysql8.0"
   skip_final_snapshot    = true
   publicly_accessible    = true
-  vpc_security_group_ids = [aws_security_group.drumncode_vpc.id]
+  vpc_security_group_ids = [aws_security_group.drumncode_ecs.id]
   db_subnet_group_name   = aws_db_subnet_group.rds.name
 }
 
