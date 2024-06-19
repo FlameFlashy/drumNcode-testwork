@@ -51,3 +51,30 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
   name = "ecsInstanceProfile"
   role = aws_iam_role.ecs_task_execution_drm.name
 }
+
+# IAM Policy for accessing SSM Parameters and Secrets Manager
+resource "aws_iam_policy" "ecs_ssm_secrets_access" {
+  name        = "EcsSSMSecretsAccessPolicy"
+  description = "Policy to allow ECS tasks to access SSM parameters and Secrets Manager secrets"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameters",
+          "ssm:GetParameter",
+          "ssm:GetParameterHistory",
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Attach the new policy to the ECS task execution role
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_drm_ssm_secrets" {
+  role       = aws_iam_role.ecs_task_execution_drm.name
+  policy_arn = aws_iam_policy.ecs_ssm_secrets_access.arn
+}

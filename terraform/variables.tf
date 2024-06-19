@@ -1,6 +1,6 @@
 variable "docker_image" {
   description = "The Docker image for the laravel-dnc container"
-  default     = "637423237571.dkr.ecr.eu-central-1.amazonaws.com/flameflashy-drumncode:laravel-dnc"
+  default     = "637423237571.dkr.ecr.eu-central-1.amazonaws.com/flameflashy-drumncode:latest"
 }
 
 variable "db_user" {
