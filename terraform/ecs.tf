@@ -38,26 +38,11 @@ resource "aws_security_group" "drumncode_ecs" {
   }
 }
 
-resource "aws_security_group_rule" "allow_internal_communication" {
-  type                     = "ingress"
-  from_port                = 0
-  to_port                  = 65535
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.drumncode_vpc.id
-  source_security_group_id = aws_security_group.drumncode_vpc.id
-  description              = "Allow internal communication within the security group"
-}
-
 # ECS Cluster
 resource "aws_ecs_cluster" "drumncode_vpc" {
   name = "ecs-cluster-flameflashy-drumncode"
 }
 
-locals {
-  endpoint_with_port = aws_db_instance.database.endpoint
-  endpoint_parts = split(":", local.endpoint_with_port)
-  endpoint_without_port = local.endpoint_parts[0]
-}
 
 # ECS Task Definition for laravel
 resource "aws_ecs_task_definition" "laravel" {
@@ -89,7 +74,7 @@ resource "aws_ecs_task_definition" "laravel" {
         },
         {
           name : "DB_HOST",
-          value : local.endpoint_without_port
+          value : aws_db_instance.database.address
         },
         {
           name : "DB_PORT",
@@ -302,10 +287,6 @@ resource "aws_ecs_task_definition" "laravel" {
   ])
 }
 
-output "database_endpoint" {
-  value = local.endpoint_without_port
-}
-
 # ECS Service for laravel
 resource "aws_ecs_service" "laravel-service" {
   name            = "laravel-service"
@@ -330,4 +311,3 @@ resource "aws_cloudwatch_log_group" "laravel" {
   name              = "/ecs/laravel"
   retention_in_days = 7
 }
-
