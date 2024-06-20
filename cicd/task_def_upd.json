@@ -128,7 +128,7 @@
                 },
                 {
                     "name": "REDIS_HOST",
-                    "value": "127.0.0.1"
+                    "value": "dnc-redis.27ppar.0001.euc1.cache.amazonaws.com"
                 },
                 {
                     "name": "FILESYSTEM_DISK",

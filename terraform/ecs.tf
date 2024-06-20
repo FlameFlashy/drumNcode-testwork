@@ -59,7 +59,6 @@ locals {
   endpoint_without_port = local.endpoint_parts[0]
 }
 
-
 # ECS Task Definition for laravel
 resource "aws_ecs_task_definition" "laravel" {
   family                   = "laravel-task"
