@@ -36,5 +36,5 @@ jobs:
 
       - name: Register_task_definition_and_update_ecs_service_worker
         run: |
-          aws ecs register-task-definition --region ${{ secrets.AWS_REGION }} --cli-input-json /cicd/task_def_upd.json
+          aws ecs register-task-definition --region ${{ secrets.AWS_REGION }} --cli-input-json file://cicd/task_def_upd.json
           aws ecs update-service --cluster ecs-cluster-flameflashy-drumncode --service laravel-service --task-definition laravel-task
