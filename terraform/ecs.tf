@@ -30,13 +30,6 @@ resource "aws_security_group" "drumncode_ecs" {
     security_groups = [aws_security_group.drumncode_vpc.id]
   }
 
-  ingress {
-    from_port       = 3306
-    to_port         = 3306
-    protocol        = "tcp"
-    security_groups = [aws_security_group.drumncode_vpc.id]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -59,6 +52,13 @@ resource "aws_security_group_rule" "allow_internal_communication" {
 resource "aws_ecs_cluster" "drumncode_vpc" {
   name = "ecs-cluster-flameflashy-drumncode"
 }
+
+locals {
+  endpoint_with_port = aws_db_instance.database.endpoint
+  endpoint_parts = split(":", local.endpoint_with_port)
+  endpoint_without_port = local.endpoint_parts[0]
+}
+
 
 # ECS Task Definition for laravel
 resource "aws_ecs_task_definition" "laravel" {
@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "laravel" {
         },
         {
           name : "DB_HOST",
-          value : "terraform-20240619153333570500000006.c34as0ca8wv2.eu-central-1.rds.amazonaws.com"
+          value : local.endpoint_without_port
         },
         {
           name : "DB_PORT",
@@ -301,6 +301,10 @@ resource "aws_ecs_task_definition" "laravel" {
       }
     }
   ])
+}
+
+output "database_endpoint" {
+  value = local.endpoint_without_port
 }
 
 # ECS Service for laravel

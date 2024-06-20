@@ -19,7 +19,7 @@ resource "aws_security_group" "database" {
   }
 }
 
-# RDS PostgreSQL Database
+# RDS mysql Database
 resource "aws_db_instance" "database" {
   allocated_storage      = 10
   engine                 = "mysql"
@@ -31,7 +31,7 @@ resource "aws_db_instance" "database" {
   parameter_group_name   = "default.mysql8.0"
   skip_final_snapshot    = true
   publicly_accessible    = true
-  vpc_security_group_ids = [aws_security_group.drumncode_ecs.id]
+  vpc_security_group_ids = [aws_security_group.database.id]
   db_subnet_group_name   = aws_db_subnet_group.rds.name
 }
 
