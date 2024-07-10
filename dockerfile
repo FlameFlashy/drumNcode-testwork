@@ -38,7 +38,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set the working directory
 WORKDIR /app
-COPY . /app
+COPY ./laravel /app
 
 # Install Laravel application dependencies
 RUN composer install --no-dev --optimize-autoloader
